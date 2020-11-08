@@ -79,9 +79,9 @@ void MR_Run(int argc, char* argv[],
     // wait mapper to finish 
 
     // call reducer 
-    std::queue<std::tuple<const std::string&, getter_t, int>> reduce_inputs;
+    std::queue<std::tuple<std::string, getter_t, int>> reduce_inputs;
     generate_reduce_input<decltype(reduce_inputs)>(&reduce_inputs);
-    ThreadPool<std::tuple<const std::string&, getter_t, int >, reducer_t> reducer (num_reducers, reduce_inputs, reduce_func);
+    ThreadPool<std::tuple<std::string, getter_t, int >, reducer_t> reducer (num_reducers, reduce_inputs, reduce_func);
     reducer.start_jobs();
     reducer.terminate_and_wait();
     // wait reducer to finish
