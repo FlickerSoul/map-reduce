@@ -2,7 +2,7 @@
 #include <map>
 #include <mutex>
 #include <iostream>
-#include <future>
+#include <vector>
 
 using namespace std;
 
@@ -23,7 +23,11 @@ namespace MR_Utilities {
           this->lock.lock();
           unsigned long current_head = head++;
           this->lock.unlock();
-          return (this->list[current_head]);
+          if (current_head >= this->list.size()) {
+            return nullptr;
+          } else {
+            return (this->list[current_head]);
+          }
       }
   };
 
