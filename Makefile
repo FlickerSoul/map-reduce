@@ -36,27 +36,8 @@ test_thread_pool: thread_pool_test.o
 utilities_test: utilities_test.o
 	./utilities_test.o
 
-test_wish_utils: test_wish_utils.o
-	./test_wish_utils.o < wish_utils_test.in
-	rm a.txt
-
-wish: wish.c wish_utils.o commands.o parallel_commands.o
-	$(CXX) $(CXX_FLAGS) -o $@ $^
-
-leak_test: test_commands.o test_parallel_commands.o test_wish_utils.o
-	$(VALGRIND) ./test_commands.o 
-	$(VALGRIND) ./test_parallel_commands.o 
-	$(VALGRIND) ./test_wish_utils.o < wish_utils_test.in
-	rm a.txt
-
-test_wish: wish
-	./test-wish.sh
-
-run: wish
-	./wish
-
-vrun: wish
-	$(VALGRIND) ./wish
+map_reduce_test: map_reduce_test.o
+	./map_reduce_test.o
 
 clean:
 	rm -rf *~ *.o $(TARGETS) *.dSYM
