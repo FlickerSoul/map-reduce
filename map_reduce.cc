@@ -1,11 +1,13 @@
 #include "map_reduce.hh"
 #include "thread_pool.hh"
+#include "utilities.hh"
+
 
 using namespace MapReduce;
 using namespace MR_Utilities;
 
 //sets info from the global datastructure
-void MR_Emit(const std::string& key, const std::string& value){
+void MR_Emit(const std::string& key, const std::string& value) {
     int part_num = global_partioner(key, partition_number);
     MapWrapper* map = storage->get_mapping(part_num);
     List* list = map->get_list_or_initialize(key);

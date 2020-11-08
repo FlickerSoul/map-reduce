@@ -4,7 +4,6 @@
 
 #include <functional>
 #include <string>
-#include "utilities.hh"
 
 namespace MapReduce {
 
