@@ -23,6 +23,7 @@ namespace MR_Utilities {
           this->lock.lock();
           unsigned long current_head = head++;
           this->lock.unlock();
+
           if (current_head >= this->list.size()) {
             return nullptr;
           } else {
@@ -39,9 +40,15 @@ namespace MR_Utilities {
 
       List* get_list_or_initialize(std::string key){
           this->lock.lock();
+
           List* list = this->mapping[key];
+          if (list == nullptr) {
+            list = new List();
+            this->mapping[key] = list;
+          }
+
           this->lock.unlock();
-          return (list);
+          return list;
       }
   };
 
@@ -54,23 +61,16 @@ namespace MR_Utilities {
       ~GlobalStorage();
       MapWrapper* get_mapping(unsigned long partition_num) {
         // if the vector is not large enough, we make it larger 
-        MapWrapper* wrapper = nullptr;
-
         this->lock.lock();
         if (partition_num >= this->storage_vector.size()) {
           this->storage_vector.resize(partition_num);
-          wrapper= new MapWrapper();
         }
-
-        // TODO modify this 
+        
+        MapWrapper* wrapper = this->storage_vector[partition_num];
 
         if (wrapper == nullptr) {
-          wrapper = this->storage_vector[partition_num];
-        } else {
-          this->storage_vector.insert(
-            this->storage_vector.begin() + partition_num, 
-            wrapper
-          );
+          wrapper= new MapWrapper();
+          this->storage_vector[partition_num] = wrapper;
         }
         this->lock.unlock();
         
