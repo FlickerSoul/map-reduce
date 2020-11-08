@@ -9,10 +9,13 @@ all: $(TARGETS)
 thread_pool.o: thread_pool.cc thread_pool.hh
 	$(CXX) $(CXX_FLAGS) -c -o $@ $<
 
-parallel_commands.o: parallel_commands.c parallel_commands.h
+utilities.o: utilities.cc utilities.hh
 	$(CXX) $(CXX_FLAGS) -c -o $@ $<
 
-wish_utils.o: wish_utils.c wish_utils.h
+map_reduce.o: map_reduce.cc map_reduce.hh
+	$(CXX) $(CXX_FLAGS) -c -o $@ $<
+
+word_count.o: ../word_count.cc thread_pool.o 
 	$(CXX) $(CXX_FLAGS) -c -o $@ $<
 
 test_utils.o: test_utils.c test_utils.h
@@ -21,7 +24,7 @@ test_utils.o: test_utils.c test_utils.h
 thread_pool_test.o: thread_pool_test.cc thread_pool.o
 	$(CXX) $(CXX_FLAGS) -o $@ $^
 
-test_parallel_commands.o: test_parallel_commands.c parallel_commands.o commands.o test_utils.o
+utilities_test.o: utilities_test.cc utilities.o
 	$(CXX) $(CXX_FLAGS) -o $@ $^
 
 test_wish_utils.o: test_wish_utils.c wish_utils.o parallel_commands.o commands.o test_utils.o
@@ -30,8 +33,8 @@ test_wish_utils.o: test_wish_utils.c wish_utils.o parallel_commands.o commands.o
 test_thread_pool: thread_pool_test.o
 	./thread_pool_test.o
 
-test_parallel_commands: test_parallel_commands.o
-	./test_parallel_commands.o
+utilities_test: utilities_test.o
+	./utilities_test.o
 
 test_wish_utils: test_wish_utils.o
 	./test_wish_utils.o < wish_utils_test.in
