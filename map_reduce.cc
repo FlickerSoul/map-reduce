@@ -76,9 +76,12 @@ void MapReduce::MR_Run(int argc, char* argv[],
     std::queue<std::tuple<const char*>> map_inputs;
     generate_map_input<decltype(map_inputs)>(&map_inputs, argc, argv);
     ThreadPool<std::tuple<const char*>, MapReduce::mapper_t> mapper (num_mappers, map_inputs, map_func);
+    printf("outer start jobs\n");
     mapper.start_jobs();
     mapper.terminate_and_wait();
     // wait mapper to finish 
+
+    printf("finished waiting mapper\n");
 
     // call reducer 
     std::queue<std::tuple<std::string, MapReduce::getter_t, int>> reduce_inputs;
@@ -87,6 +90,8 @@ void MapReduce::MR_Run(int argc, char* argv[],
     reducer.start_jobs();
     reducer.terminate_and_wait();
     // wait reducer to finish
+
+    // printf("finished waiting reducer\n");
 
     printf("mapper counter %llu\n", mapper.counter);
     printf("reducer counter %llu\n", reducer.counter);

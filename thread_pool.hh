@@ -37,18 +37,21 @@ class ThreadPool {
 
         static void thread_helper(ThreadPool* pool) {
             T job_input;
+            printf("init thread\n");
             while (true) {
                 // printf("new round\n");
                 {
                     std::unique_lock<std::mutex> lock (pool->work_count_mutex);
                     while (pool->work_queue.empty()) {
+                        // printf("quueue empty\n");
                         if (pool->terminate) {
+                            // printf("terminate\n");
                             return ;
                         }
                         pool->work_fill.wait(lock);
                     }
 
-                    // printf("get job\n");
+                    // printf("got job\n");
                     job_input = pool->work_queue.front();
                     pool->work_queue.pop();
                     // printf("%lu\n", pool->work_queue.size());
@@ -57,7 +60,8 @@ class ThreadPool {
                 }
 
                 // printf("execute job\n");
-                job_helper(job_input, pool->worker);
+                std::apply(pool->worker, job_input);
+                // job_helper(job_input, pool->worker);
                 // printf("executed job, go to the next round\n");
             }
         }

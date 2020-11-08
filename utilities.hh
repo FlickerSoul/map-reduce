@@ -65,11 +65,17 @@ namespace MR_Utilities {
       MapWrapper* get_mapping(unsigned long partition_num) {
         // if the vector is not large enough, we make it larger 
         this->lock.lock();
+        // printf("get mapping locked\n");
         if (partition_num >= this->storage_vector.size()) {
-          this->storage_vector.resize(partition_num);
+          this->storage_vector.resize(partition_num + 1);
+          // printf("mapping vec resized\n");
         }
         
-        MapWrapper* wrapper = this->storage_vector[partition_num];
+        // printf("changed\n");
+        // printf("size %lu\n", this->storage_vector.size());
+        MapWrapper* wrapper = this->storage_vector.at(partition_num);
+
+        // printf("get vec %p\n", wrapper);
 
         if (wrapper == nullptr) {
           wrapper= new MapWrapper();
