@@ -16,7 +16,10 @@ map_reduce.o: map_reduce.cc map_reduce.hh
 	$(CXX) $(CXX_FLAGS) -c -o $@ $<
 
 word_count.o: ./tests/word_count.cc thread_pool.o map_reduce.o utilities.o
-	$(CXX) $(CXX_FLAGS) -o $@ $^
+	$(CXX) $(CXX_FLAGS) -o $@ $^	
+
+word_count: clean word_count.o ./tests/word_count_tests/
+	./word_count.o ./tests/word_count_tests/1.in ./tests/word_count_tests/2.in ./tests/word_count_tests/3.in ./tests/word_count_tests/4.in ./tests/word_count_tests/5.in
 
 thread_pool_test.o: thread_pool_test.cc thread_pool.o
 	$(CXX) $(CXX_FLAGS) -o $@ $^
