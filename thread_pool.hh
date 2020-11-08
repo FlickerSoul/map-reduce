@@ -50,6 +50,7 @@ class ThreadPool {
                     // printf("get job\n");
                     job_input = pool->work_queue.front();
                     pool->work_queue.pop();
+                    // printf("%lu\n", pool->work_queue.size());
 
                     pool->counter++;
                 }
