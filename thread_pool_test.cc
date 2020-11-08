@@ -18,7 +18,10 @@ void test_initialization() {
 
     tp.run_jobs();
 
+    tp.terminate_and_wait();
     assert(tp.counter == big_num);
+
+
 }
 
 int main() {
