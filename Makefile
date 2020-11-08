@@ -15,7 +15,7 @@ utilities.o: utilities.cc utilities.hh
 map_reduce.o: map_reduce.cc map_reduce.hh
 	$(CXX) $(CXX_FLAGS) -c -o $@ $<
 
-word_count.o: ../word_count.cc thread_pool.o 
+word_count.o: ./tests/word_count.cc thread_pool.o 
 	$(CXX) $(CXX_FLAGS) -c -o $@ $<
 
 test_utils.o: test_utils.c test_utils.h
