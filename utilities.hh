@@ -84,6 +84,17 @@ namespace MR_Utilities {
         return this->storage_vector[partition_num];
       }
   };
+
+
+  template <typename T>
+  struct MR_Info {
+    T global_partioner;
+    int partition_number;
+    int mapper_number;
+    int reducer_number;
+  };
+
+  extern GlobalStorage* storage;
 }
 
 #endif

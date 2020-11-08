@@ -22,7 +22,7 @@ class ThreadPool {
 
         int thread_num;
 
-        int counter = 0;
+        unsigned long long counter = 0;
         bool terminate = false;
 
         ThreadPool(int thread_num, std::queue<T> work_queue, W worker) {
