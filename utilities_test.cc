@@ -37,6 +37,8 @@ void init_global_storage() {
     std::string s = l->get_value();
     assert(s == "0");
     assert(l->head == 1);
+    l->head = 10;
+    assert(l->get_value() == "");
     l->head = 0;
 
     for (int i = 0; i < storage->storage_vector.size(); i++) {

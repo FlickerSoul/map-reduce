@@ -28,7 +28,7 @@ namespace MR_Utilities {
           this->lock.unlock();
 
           if (current_head >= this->list.size()) {
-            return nullptr;
+            return "";
           } else {
             return (this->list[current_head]);
           }
