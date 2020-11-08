@@ -1,3 +1,6 @@
+#ifndef MR_UTILITIES_
+#define MR_UTILITIES_
+
 #include <string>
 #include <map>
 #include <mutex>
@@ -38,7 +41,7 @@ namespace MR_Utilities {
       map<std::string, List*> mapping;
       mutex lock;
 
-      List* get_list_or_initialize(std::string key){
+      List* get_list_or_initialize(const std::string & key){
           this->lock.lock();
 
           List* list = this->mapping[key];
@@ -82,5 +85,7 @@ namespace MR_Utilities {
       }
   };
 
-  GlobalStorage *storage;
+  extern GlobalStorage* storage;
 }
+
+#endif
