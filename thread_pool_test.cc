@@ -16,12 +16,10 @@ void test_initialization() {
     assert(tp.worker(1,2) == f(1,2));
     assert(tp.work_queue == q);
 
-    tp.run_jobs();
+    tp.start_jobs();
 
     tp.terminate_and_wait();
     assert(tp.counter == big_num);
-
-
 }
 
 int main() {

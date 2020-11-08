@@ -68,7 +68,7 @@ class ThreadPool {
             this->work_fill.notify_one();
         }
 
-        void run_jobs() {
+        void start_jobs() {
             // mapper thread 
 
             for (int i = 0; i < this->thread_num; i++) {
