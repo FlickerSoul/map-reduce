@@ -62,6 +62,8 @@ namespace MR_Utilities {
           wrapper= new MapWrapper();
         }
 
+        // TODO modify this 
+
         if (wrapper == nullptr) {
           wrapper = this->storage_vector[partition_num];
         } else {
@@ -73,6 +75,10 @@ namespace MR_Utilities {
         this->lock.unlock();
         
         return wrapper;
+      }
+
+      MapWrapper* get_mapping_no_sync(unsigned long partition_num) {
+        return this->storage_vector[partition_num];
       }
   };
 

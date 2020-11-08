@@ -31,9 +31,33 @@ const std::string global_getter(const std::string& key, int partition_number) {
 }
 
 
+template <typename T>
+void generate_map_input(T* map_inputs, int argc, char* argv[]) {
+    for (int i = 0; i < argc; i++) {
+        map_inputs->push(std::make_tuple(argv[i]));
+    }
+}
+
+
+template <typename T>
+void generate_reduce_input(T* reduce_inputs) {
+    for (int i = 0; i < partition_number; i++) {
+        MapWrapper* partition = storage->get_mapping_no_sync(i);
+
+        for (const auto &[key, value] : partition->mapping) {
+            reduce_inputs->push(
+                std::make_tuple(
+                    key, global_getter, i
+                )
+            );
+        }
+    }
+}
+
+
 void MR_Run(int argc, char* argv[], 
-            mapper_t map, int num_mappers, 
-            reducer_t reduce, int num_reducers, 
+            mapper_t map_func, int num_mappers, 
+            reducer_t reduce_func, int num_reducers, 
             partitioner_t partition) {
 
     global_partioner = partition;
@@ -42,15 +66,18 @@ void MR_Run(int argc, char* argv[],
     reducer_number = num_reducers;
 
     //call the mappers 
-
     std::queue<std::tuple<const char*>> map_inputs;
+    generate_map_input<decltype(map_inputs)>(&map_inputs, argc, argv);
+    ThreadPool<std::tuple<const char*>, mapper_t> mapper (num_mappers, map_inputs, map_func);
+    mapper.start_jobs();
+    mapper.terminate_and_wait();
+    // wait mapper to finish 
 
-    for (int i = 0; i < argc; i++) {
-        map_inputs.push(std::make_tuple(argv[i]));
-    }
-
-    ThreadPool<const char*, mapper_t> mapper (num_mappers, map, map_inputs);
-    mapper.run_jobs();
-    //wait for mappers to finish 
-
+    // call reducer 
+    std::queue<std::tuple<const std::string&, getter_t, int>> reduce_inputs;
+    generate_reduce_input<decltype(reduce_inputs)>(&reduce_inputs);
+    ThreadPool<std::tuple<const std::string&, getter_t, int >, reducer_t> reducer (num_reducers, reduce_inputs, reduce_func);
+    reducer.start_jobs();
+    reducer.terminate_and_wait();
+    // wait reducer to finish
 }
