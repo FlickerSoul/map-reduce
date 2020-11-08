@@ -1,8 +1,8 @@
 #include <mutex>
 #include <queue>
 #include <tuple>
+#include <vector>
 #include <stdbool.h>
-#include <map>
 #include <future>
 
 template <typename T, typename W>
@@ -10,11 +10,11 @@ class ThreadPool {
 
     public:
         std::queue<T> work_queue;
-        std::map<T, std::future<void>> working_future_map;
+        std::vector<std::future<void>> working_future_vector;
 
         W worker;
         
-        std::mutex work_count_lock;
+        std::mutex work_count_mutex;
         std::condition_variable accepting_work;
 
         int thread_num;
@@ -22,7 +22,7 @@ class ThreadPool {
 
         int counter = 0;
         bool terminate = false;
-        
+
         ThreadPool(int thread_num, std::queue<T> work_queue, W worker) {
             this->thread_num = thread_num;
             this->worker = worker;
@@ -33,39 +33,51 @@ class ThreadPool {
 
         void run_jobs() {
             // mapper thread 
-            while (!this->work_queue.empty()) {
-                T job_input = this->work_queue.pop();
 
-                this->work_count_lock.lock();
+            while (!this->work_queue.empty()) {
+                T job_input = this->work_queue.front();
+                this->work_queue.pop();
+
+                // printf("popped job\n");
+                // printf("try lock\n");
+
+                std::unique_lock<std::mutex> lock (this->work_count_mutex);
+                // printf("locked\n");
                 while (this->thread_num == this->current_running_thread_num) {
-                    this->accepting_work.wait(this->work_count_lock);
+                    printf("wait lock\n");
+                    this->accepting_work.wait(lock);
                 }
 
                 // worker thread 
-                this->working_future_map.emplace(job_input, 
-                    std::async(this->job_helper, 
-                            job_input)
-                );
+                this->working_future_vector.push_back(std::async(this->job_helper, job_input, this));
 
-                this->work_count_lock.unlock();
+                this->counter++;
+
+                // printf("add job\n");
+                // printf("released lock\n");
             }
 
-            for (auto const &[key, value]: this->working_future_map) {
-                value.wait();
+            // printf("wait job to finish\n");
+            for (auto const & element: this->working_future_vector) {
+                element.wait();
             }
+            // printf("finished all jobs\n");
         }
 
-        void remove_worked_thread(T job_input) {
-            this->work_count_lock.lock();
-            this->working_future_map.erase(work_input);
+        void remove_worked_thread() {
+            // printf("getting cleaning lock\n");
+            std::unique_lock<std::mutex> lock (this->work_count_mutex);
+            // printf("got cleaning lock\n");
+            // printf("decrease counter");
             this->current_running_thread_num -= 1;
-            this->work_count_lock.unlock();
+            // printf("unlock cleaning lock\n");
             this->accepting_work.notify_one();
+            // printf("nofity to put jobs\n");
         };
 
-        void job_helper(T job_input) {
-            std::apply(this->worker, job_input);
-            this->remove_worked_thread(job_input);
+        static void job_helper(T job_input, ThreadPool* pool) {
+            std::apply(pool->worker, job_input);
+            pool->remove_worked_thread();
         }
         
 };
