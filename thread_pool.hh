@@ -37,7 +37,7 @@ class ThreadPool {
 
         static void thread_helper(ThreadPool* pool) {
             T job_input;
-            printf("init thread\n");
+            // printf(" thread\n");
             while (true) {
                 // printf("new round\n");
                 {

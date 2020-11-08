@@ -1,4 +1,6 @@
 #include "map_reduce.hh"
+#include "thread_pool.hh"
+#include "utilities.hh"
 
 
 MR_Utilities::GlobalStorage* MR_Utilities::storage = new MR_Utilities::GlobalStorage();
@@ -7,17 +9,10 @@ MR_Utilities::MR_Info<MapReduce::partitioner_t> mr_info;
 
 //sets info from the global datastructure
 void MapReduce::MR_Emit(const std::string& key, const std::string& value) {
-    printf("emitted value\n");
     int part_num = mr_info.global_partioner(key, mr_info.partition_number);
-    printf("get partition value\n");
     MR_Utilities::MapWrapper* map = MR_Utilities::storage->get_mapping(part_num);
-    assert(map != nullptr);
-    printf("get map\n");
     MR_Utilities::List* list = map->get_list_or_initialize(key);
-    assert(list != nullptr);
-    printf("get list\n");
     list->add_value(value);
-    printf("added value\n");
 }
 
 unsigned long MapReduce::MR_DefaultHashPartition(const std::string& key, int num_partitions) {
@@ -72,16 +67,16 @@ void MapReduce::MR_Run(int argc, char* argv[],
     mr_info.mapper_number = num_mappers;
     mr_info.reducer_number = num_reducers;
 
+    printf("mapper thread num: %i\n", num_mappers);
+    printf("reducer thread num: %i\n", num_reducers);
+
     //call the mappers 
     std::queue<std::tuple<const char*>> map_inputs;
     generate_map_input<decltype(map_inputs)>(&map_inputs, argc, argv);
     ThreadPool<std::tuple<const char*>, MapReduce::mapper_t> mapper (num_mappers, map_inputs, map_func);
-    printf("outer start jobs\n");
     mapper.start_jobs();
     mapper.terminate_and_wait();
     // wait mapper to finish 
-
-    printf("finished waiting mapper\n");
 
     // call reducer 
     std::queue<std::tuple<std::string, MapReduce::getter_t, int>> reduce_inputs;
@@ -91,8 +86,6 @@ void MapReduce::MR_Run(int argc, char* argv[],
     reducer.terminate_and_wait();
     // wait reducer to finish
 
-    // printf("finished waiting reducer\n");
-
-    printf("mapper counter %llu\n", mapper.counter);
-    printf("reducer counter %llu\n", reducer.counter);
+    printf("mapper counter: %llu\n", mapper.counter);
+    printf("reducer counter: %llu\n", reducer.counter);
 }
