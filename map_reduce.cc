@@ -42,9 +42,12 @@ void generate_map_input(T* map_inputs, int argc, char* argv[]) {
 template <typename T>
 void generate_reduce_input(T* reduce_inputs) {
     for (int i = 0; i < partition_number; i++) {
-        MapWrapper* partition = storage->get_mapping_no_sync(i);
-
+        const MapWrapper* partition = storage->get_mapping_no_sync(i);
+        if (partition == nullptr) {
+            continue;
+        }
         for (const auto &[key, value] : partition->mapping) {
+            
             reduce_inputs->push(
                 std::make_tuple(
                     key, global_getter, i
@@ -59,6 +62,8 @@ void MR_Run(int argc, char* argv[],
             mapper_t map_func, int num_mappers, 
             reducer_t reduce_func, int num_reducers, 
             partitioner_t partition) {
+    
+    GlobalStorage* storage = new GlobalStorage();
 
     global_partioner = partition;
     partition_number = num_reducers;
