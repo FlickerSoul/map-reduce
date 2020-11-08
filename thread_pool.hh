@@ -1,3 +1,6 @@
+#ifndef MR_THREAD_POOL_
+#define MR_THREAD_POOL_
+
 #include <mutex>
 #include <queue>
 #include <tuple>
@@ -22,7 +25,7 @@ class ThreadPool {
         int counter = 0;
         bool terminate = false;
 
-        ThreadPool(int thread_num, std::queue<T>& work_queue, W worker) {
+        ThreadPool(int thread_num, std::queue<T> work_queue, W worker) {
             this->thread_num = thread_num;
             this->worker = worker;
             this->work_queue = work_queue;
@@ -126,3 +129,5 @@ class ThreadPool {
         }
         
 };
+
+#endif 
