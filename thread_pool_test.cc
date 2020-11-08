@@ -11,7 +11,7 @@ void test_initialization() {
         q.push(std::make_tuple(1, 1));
     }
 
-    int thread_num = 2;
+    int thread_num = 8;
 
     ThreadPool<std::tuple<int, int>, decltype(f)> tp (thread_num, q, f);
     for (int i = 0; i < small_num; i++) {

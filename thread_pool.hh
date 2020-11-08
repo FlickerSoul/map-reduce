@@ -15,11 +15,9 @@ class ThreadPool {
         W worker;
         
         std::mutex work_count_mutex;
-        std::condition_variable accepting_work;
         std::condition_variable work_fill;
 
         int thread_num;
-        int current_running_thread_num;
 
         int counter = 0;
         bool terminate = false;
@@ -70,8 +68,6 @@ class ThreadPool {
         }
 
         void start_jobs() {
-            // mapper thread 
-
             for (int i = 0; i < this->thread_num; i++) {
                 working_future_vector.push_back(this->lauch_thread());
             }
