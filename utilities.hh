@@ -84,8 +84,6 @@ namespace MR_Utilities {
         return this->storage_vector[partition_num];
       }
   };
-
-  extern GlobalStorage* storage;
 }
 
 #endif
