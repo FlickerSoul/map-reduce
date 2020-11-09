@@ -61,7 +61,6 @@ class ThreadPool {
 
                 // printf("execute job\n");
                 std::apply(pool->worker, job_input);
-                // job_helper(job_input, pool->worker);
                 // printf("executed job, go to the next round\n");
             }
         }

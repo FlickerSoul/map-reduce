@@ -91,6 +91,9 @@ namespace MR_Utilities {
       }
 
       MapWrapper* get_mapping_no_sync(unsigned long partition_num) {
+        if (this->storage_vector.size() == 0) {
+          return nullptr;
+        }
         return this->storage_vector[partition_num];
       }
   };
