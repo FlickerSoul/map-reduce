@@ -29,8 +29,8 @@ void reduce_func(const std::string & key, MapReduce::getter_t get_next, int part
 
 int main(int argc, char *argv[]) {
     if (argc == 1) {
-        printf("word_count.o [file_name] ...");
-        return 0;
+        printf("%s [file_name ...]", argv[0]);
+        exit(1);
     } 
     MapReduce::MR_Run(argc, argv, map_func, 10, reduce_func, 10, MapReduce::MR_DefaultHashPartition);
     return 0;
