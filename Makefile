@@ -28,6 +28,8 @@ grep: clean grep.o ./tests/grep_tests/
 	./grep.o Dictum ./tests/grep_tests/1.in ./tests/grep_tests/2.in
 	./grep.o Dictum ./tests/grep_tests/2.in
 	./grep.o dictum ./tests/grep_tests/1.in ./tests/grep_tests/2.in
+	./grep.o abc ./tests/grep_tests/1.in
+
 
 thread_pool_test.o: thread_pool_test.cc thread_pool.o
 	$(CXX) $(CXX_FLAGS) -o $@ $^
