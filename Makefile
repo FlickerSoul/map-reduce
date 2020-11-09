@@ -18,8 +18,16 @@ map_reduce.o: map_reduce.cc map_reduce.hh
 word_count.o: ./tests/word_count.cc thread_pool.o map_reduce.o utilities.o
 	$(CXX) $(CXX_FLAGS) -o $@ $^	
 
+grep.o: ./tests/grep.cc thread_pool.o map_reduce.o utilities.o
+	$(CXX) $(CXX_FLAGS) -o $@ $^
+
 word_count: clean word_count.o ./tests/word_count_tests/
 	./word_count.o ./tests/word_count_tests/1.in ./tests/word_count_tests/2.in ./tests/word_count_tests/3.in ./tests/word_count_tests/4.in ./tests/word_count_tests/5.in
+
+grep: clean grep.o ./tests/grep_tests/
+	./grep.o Dictum ./tests/grep_tests/1.in ./tests/grep_tests/2.in
+	./grep.o Dictum ./tests/grep_tests/2.in
+	./grep.o dictum ./tests/grep_tests/1.in ./tests/grep_tests/2.in
 
 thread_pool_test.o: thread_pool_test.cc thread_pool.o
 	$(CXX) $(CXX_FLAGS) -o $@ $^
