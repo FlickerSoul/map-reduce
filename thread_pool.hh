@@ -78,47 +78,7 @@ class ThreadPool {
             for (int i = 0; i < this->thread_num; i++) {
                 working_future_vector.push_back(this->lauch_thread());
             }
-
-            // while (!this->work_queue.empty()) {
-            //     T job_input = this->work_queue.front();
-            //     this->work_queue.pop();
-
-            //     // printf("popped job\n");
-            //     // printf("try lock\n");
-
-            //     std::unique_lock<std::mutex> lock (this->work_count_mutex);
-            //     // printf("locked\n");
-            //     while (this->thread_num == this->current_running_thread_num) {
-            //         printf("wait lock\n");
-            //         this->accepting_work.wait(lock);
-            //     }
-
-            //     // worker thread 
-            //     this->working_future_vector.push_back(std::async(this->job_helper, job_input, this));
-
-            //     this->counter++;
-
-            //     printf("add job %i\n", this->counter);
-            //     // printf("released lock\n");
-            // }
-
-            // printf("wait job to finish\n");
-            // for (auto const & element: this->working_future_vector) {
-            //     element.wait();
-            // }
-            // printf("finished all jobs\n");
         }
-
-        // void remove_worked_thread() {
-        //     // printf("getting cleaning lock\n");
-        //     std::unique_lock<std::mutex> lock (this->work_count_mutex);
-        //     // printf("got cleaning lock\n");
-        //     // printf("decrease counter");
-        //     this->current_running_thread_num -= 1;
-        //     // printf("unlock cleaning lock\n");
-        //     this->accepting_work.notify_one();
-        //     // printf("nofity to put jobs\n");
-        // };
 
         static void job_helper(T job_input, W worker) {
             std::apply(worker, job_input);
