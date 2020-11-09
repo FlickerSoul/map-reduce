@@ -24,9 +24,9 @@ unsigned long MapReduce::MR_DefaultHashPartition(const std::string& key, int num
     return hash % num_partitions;
 }
 
-const std::string global_getter(const std::string& key, int partition_number) {
-    MR_Utilities::MapWrapper* map = MR_Utilities::storage->get_mapping(partition_number);
-    MR_Utilities::List* list = map->get_list_or_initialize(key);
+inline const std::string global_getter(const std::string& key, int partition_number) {
+    MR_Utilities::MapWrapper* map = MR_Utilities::storage->get_mapping_no_sync(partition_number);
+    MR_Utilities::List* list = map->get_list_no_sync(key);
 
     return list->get_value();
 }

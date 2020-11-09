@@ -53,6 +53,10 @@ namespace MR_Utilities {
           this->lock.unlock();
           return list;
       }
+
+      List* get_list_no_sync(const std::string & key) {
+        return this->mapping[key];
+      }
   };
 
 
